@@ -130,6 +130,8 @@ class Stats {
   String recoveryRate = '0';
   String fatalityRate = '0';
 
+  Stats({this.confirmed, this.deaths, this.recoverd});
+
   Stats.fromServiceApi(parsedJson) {
     try {
       confirmed = parsedJson["confirmed"]["value"];
@@ -169,6 +171,22 @@ class Country {
     try {
       if (parsedJson["name"] != null) {
         name = parsedJson["name"];
+        iso = parsedJson["iso2"];
+        iso3 = parsedJson["iso3"];
+      }
+    } catch (e) {
+      print(e.toString());
+      throw (e.toString());
+    }
+  }
+  Country.fromDeathToll(parsedJson) {
+    //!countryIso = parsedJson;
+    //!countries = countryIso["countries"].keys.toList();
+    //!countryIso["countries"].forEach((country) {});
+    //!deprecated code
+    try {
+      if (parsedJson["countryRegion"] != null) {
+        name = parsedJson["countryRegion"];
         iso = parsedJson["iso2"];
         iso3 = parsedJson["iso3"];
       }

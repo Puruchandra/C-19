@@ -1,10 +1,12 @@
 import 'dart:async';
 
+import 'package:corona_stats/models/death_toll.dart';
 import 'package:corona_stats/models/stats.dart';
 import 'package:corona_stats/screens/widgets/custom_bottom_sheet.dart';
 import 'package:corona_stats/screens/widgets/data_card.dart';
 import 'package:corona_stats/screens/widgets/exception_handler_widget.dart';
 import 'package:corona_stats/screens/widgets/pie_card.dart';
+import 'package:corona_stats/screens/widgets/search_bar.dart';
 import 'package:corona_stats/screens/widgets/text_stats_card.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -31,22 +33,19 @@ class _HomeScreenState extends State<HomeScreen> {
   StatsProvider model;
   @override
   Widget build(BuildContext context) {
+    final statsProvider = Provider.of<StatsProvider>(context);
+    final deathTollProvider = Provider.of<DeathTollProvider>(context);
     return Scaffold(
       appBar: AppBar(
-        // actions: <Widget>[
-        //   IconButton(
-        //       icon: Icon(Icons.notifications, color: Colors.blue),
-        //       onPressed: null)
-        // ],
         elevation: 0.0,
         title: Text('Covid-19'),
         centerTitle: false,
         backgroundColor: Color(0xff0F111A),
       ),
-      drawer: Drawer(child: ListView()),
+      // drawer: Drawer(child: ListView()),
       backgroundColor: Color(0xff0F111A),
-      body: ChangeNotifierProvider<StatsProvider>(
-        create: (ctx) => StatsProvider(),
+      body: ListenableProvider.value(
+        value: statsProvider,
         child: Consumer(
             builder: (BuildContext context, StatsProvider value, Widget child) {
           model = value;
@@ -83,6 +82,13 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
+                    SearchBar(
+                      value: value,
+                      onItemSelected: (item) {
+                        if (item != null)
+                          value.fetchDetailForThisCountry(item.iso, item.name);
+                      },
+                    ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
@@ -126,24 +132,37 @@ class _HomeScreenState extends State<HomeScreen> {
           );
         }),
       ),
-      floatingActionButton: FloatingActionButton(
-        child: Icon(
-          Icons.public,
-          size: 50.0,
-        ),
-        onPressed: model != null
-            ? () {
-                setState(() {
-                  displayWait = false;
-                });
+      floatingActionButton: ListenableProvider.value(
+        value: deathTollProvider,
+        child: !deathTollProvider.fetching
+            ? FloatingActionButton(
+                backgroundColor: Colors.white,
+                child: Icon(
+                  Icons.error,
+                  color: Colors.red,
+                  size: 35.0,
+                ),
+                onPressed: model != null
+                    ? () {
+                        setState(() {
+                          displayWait = false;
+                        });
 
-                showModalBottomSheet(
-                    context: context,
-                    builder: (_) => CustomBottomSheet(
-                          model: model,
-                        ));
-              }
-            : null,
+                        showModalBottomSheet(
+                            backgroundColor: Color(0xff1b232f),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.only(
+                                  topLeft: Radius.circular(16.0),
+                                  topRight: Radius.circular(16.0)),
+                            ),
+                            context: context,
+                            builder: (_) => CustomBottomSheet(
+                                  model: deathTollProvider,
+                                ));
+                      }
+                    : null,
+              )
+            : Container(),
       ),
     );
   }

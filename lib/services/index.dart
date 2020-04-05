@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:connectivity/connectivity.dart';
 import 'package:corona_stats/models/stats.dart';
 import 'package:corona_stats/services/service.dart';
 
@@ -11,6 +12,8 @@ abstract class BaseService {
   Future getGlobalStatForDate();
 
   Future getCountries();
+
+  Future getGlobalDeathsToll();
 
   Future getStatForCountry(String iso);
 }
@@ -27,8 +30,9 @@ class InternetService implements BaseService {
   @override
   Future getCountries() async {
     try {
-      final result = await InternetAddress.lookup('google.com');
-      if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+      var connectivityResult = await (Connectivity().checkConnectivity());
+      if (connectivityResult == ConnectivityResult.mobile ||
+          connectivityResult == ConnectivityResult.wifi) {
         return await _service.getCountries();
       }
     } on SocketException catch (_) {
@@ -40,8 +44,9 @@ class InternetService implements BaseService {
   @override
   Future<Stats> getGlobalDailyStats() async {
     try {
-      final result = await InternetAddress.lookup('google.com');
-      if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+      var connectivityResult = await (Connectivity().checkConnectivity());
+      if (connectivityResult == ConnectivityResult.mobile ||
+          connectivityResult == ConnectivityResult.wifi) {
         return await _service.getGlobalDailyStats();
       }
     } on SocketException catch (_) {
@@ -65,12 +70,27 @@ class InternetService implements BaseService {
   @override
   Future getStatForCountry(String iso) async {
     try {
-      final result = await InternetAddress.lookup('google.com');
-      if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+      var connectivityResult = await (Connectivity().checkConnectivity());
+      if (connectivityResult == ConnectivityResult.mobile ||
+          connectivityResult == ConnectivityResult.wifi) {
         return await _service.getStatForCountry(iso);
       }
     } on SocketException catch (_) {
       throw Exception('No Internet Connection!');
+    }
+    return null;
+  }
+
+  @override
+  Future getGlobalDeathsToll() async {
+    try {
+      var connectivityResult = await (Connectivity().checkConnectivity());
+      if (connectivityResult == ConnectivityResult.mobile ||
+          connectivityResult == ConnectivityResult.wifi) {
+        return await _service.getGlobalDeathsToll();
+      }
+    } catch (e) {
+      throw e;
     }
     return null;
   }

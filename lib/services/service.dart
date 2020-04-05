@@ -29,6 +29,7 @@
 
 import 'dart:convert';
 
+import 'package:corona_stats/models/death_toll.dart';
 import 'package:corona_stats/models/stats.dart';
 import 'package:corona_stats/services/index.dart';
 import 'package:http/http.dart' as http;
@@ -62,7 +63,7 @@ class Service implements BaseService {
       print.toString();
       throw Exception(e.toString());
     }
-    print("..hh.jb");
+
     return null;
   }
 
@@ -109,6 +110,27 @@ class Service implements BaseService {
       throw Exception(e.toString());
     }
 
+    return null;
+  }
+
+  @override
+  Future getGlobalDeathsToll() async {
+    try {
+      List<DeathToll> _globalDeathTolls = [];
+      var response = await http.get(baseUrl + 'api/deaths');
+      if (response.statusCode == 200) {
+        final json = jsonDecode(response.body);
+        json.takeWhile((val) => _globalDeathTolls.length < 20).forEach((item) {
+          _globalDeathTolls.add(DeathToll.fromApiResponse(item));
+        });
+        return _globalDeathTolls;
+      }
+      if (response.statusCode == 404) {
+        throw Exception("Not Found");
+      }
+    } catch (e) {
+      throw Exception(e.toString());
+    }
     return null;
   }
 }

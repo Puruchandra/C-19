@@ -22,13 +22,6 @@ class DataCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: Color(0xff1b232f),
         borderRadius: BorderRadius.circular(10.0),
-        boxShadow: [
-          // BoxShadow(
-          //   color: Colors.black.withOpacity(0.3),
-          //   offset: Offset(0.0, 2.0),
-          //   blurRadius: 4.0,
-          // )
-        ],
       ),
       child: alignVertical
           ? Column(
