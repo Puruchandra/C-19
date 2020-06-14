@@ -4,7 +4,7 @@ This repository has simple Covid-19 data monitoring app. The app is built with f
 NOTE - Download the latest apk from here - 
 ![](screenshots/C19_banner.png)
 
-Note: You can get the latest apk from - https://drive.google.com/file/d/1y9n4cAQEjpFj3tjRWySQJseFuyOh4HqJ/view
+Note: You can get the latest apk from - [GoogleDrive](https://drive.google.com/file/d/1y9n4cAQEjpFj3tjRWySQJseFuyOh4HqJ/view)
 
 # Libaray References
 
